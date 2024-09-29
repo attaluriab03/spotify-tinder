@@ -1,17 +1,31 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import ReactDOM from 'react-dom/client'
+import { BrowserRouter, Route, Routes, Link, useLocation, useNavigate } from 'react-router-dom';
+import Login from './components/Login';
+import Home from './components/Home';
+import Profile from './components/Profile';
+import { AuthProvider } from './components/AuthContext';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+const RootApp = () => {
+	const location = useLocation();
+	const navigate = useNavigate();
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+	return (
+		<AuthProvider location={location} navigate={navigate}>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path='/home' element={<Home />}/>
+          <Route path="/profile" element={<Profile />} />
+        </Routes>
+    </AuthProvider>
+	);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  	// <React.StrictMode>
+      <BrowserRouter> 
+        <RootApp />
+      </BrowserRouter>
+  	// </React.StrictMode>,
+)
+
