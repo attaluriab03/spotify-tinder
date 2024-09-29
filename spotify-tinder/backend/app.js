@@ -181,6 +181,40 @@ app.get("/refresh_token", function (req, res) {
   });
 });
 
+app.get("/recommendations", function (req, res) {
+  var access_token = req.query.access_token;
+  var seed_tracks = req.query.seed_tracks; // comma-separated list of Spotify track IDs
+
+  if (!access_token) {
+    return res.status(400).json({ error: "Access token is required" });
+  }
+
+  if (!seed_tracks) {
+    return res.status(400).json({ error: "Seed track is required" });
+  }
+
+  var authOptions = {
+    url: "https://api.spotify.com/v1/recommendations",
+    qs: {
+      seed_tracks: seed_tracks, // Using the track ID that was swiped right
+      limit: 10, // Fetch 10 new recommendations
+    },
+    headers: {
+      Authorization: "Bearer " + access_token,
+    },
+    json: true,
+  };
+
+  request.get(authOptions, function (error, response, body) {
+    if (!error && response.statusCode === 200) {
+      res.json(body);
+    } else {
+      res.status(response.statusCode).json({ error: "Failed to get recommendations" });
+    }
+  });
+});
+
+
 /* --------------------------------- EXPRESS ROUTES ------------------------------------- */
 app.use(express.json());
 
